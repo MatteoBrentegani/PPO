@@ -1,7 +1,7 @@
 # Proximal Policy Optimization - with Keras
 
 This is Keras implementation of PPO:
-  * double action stream (Linear and Angular Velocity) [PPO](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_DoubleAction)
+  * double action stream (Linear and Angular Velocity) [PPO_DoubleAction](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_DoubleAction)
   * multiple agent [PPO-MultipleAgent](https://arxiv.org/pdf/1707.06347.pdf)
 
 
