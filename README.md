@@ -25,7 +25,7 @@ Here the key point:
   * action_size2 (linear velocity) = 3
   * batch_size = 64
   * output layer = 8 into 2 streams (5 nodes for angular and 3 for linear velocity)
-  * lossWeights from the output: 
+  * lossWeights for the output layer: 
     * 0,625
     * 0.375
     
