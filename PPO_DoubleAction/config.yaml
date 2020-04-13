@@ -4,8 +4,6 @@ training:
 
 hyperparameters:
     discount_factor : 0.99
-    epsilon_decay : 0.99 #dqn only
-    epsilon_min : 0.05 #dqn only
 
 network_size:
     state_size : 27

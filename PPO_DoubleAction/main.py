@@ -19,8 +19,6 @@ if __name__ == '__main__':
     ACTION_SIZE2 = cfg['network_size']['action_size2']
     BATCH_SIZE = cfg['network_size']['batch_size']
 
-    EPS_MIN = cfg['hyperparameters']['epsilon_min']
-    EPS_DECAY = cfg['hyperparameters']['epsilon_decay']
     DISCOUNT_FACTOR = cfg['hyperparameters']['discount_factor']
 
     EPISODES = cfg['training']['episodes']
@@ -31,4 +29,4 @@ if __name__ == '__main__':
     ENV = UnityEnv(env_name, worker_id=0)
 
     print("END ENV")
-    PPO(ENV, 1.0, EPS_MIN, EPS_DECAY, BATCH_SIZE, TARGET_MODEL_UPDATE, EPISODES, STATE_SIZE, ACTION_SIZE, ACTION_SIZE2)
+    PPO(ENV, BATCH_SIZE, TARGET_MODEL_UPDATE, EPISODES, STATE_SIZE, ACTION_SIZE, ACTION_SIZE2)

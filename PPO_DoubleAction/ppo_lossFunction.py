@@ -52,10 +52,8 @@ target1 =  tf.placeholder(tf.float32, shape=(64,5)) # shapes of output1 your tar
 target2 = tf.placeholder(tf.float32, shape=(64,3)) # shapes of output2 your target has
 
 
-
-# old buffer size 20000
 class PPO:
-    def __init__(self, env, eps, eps_min, eps_decay, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 256, gamma = 0.99, lr = 1e-4, tau = 0.001):
+    def __init__(self, env, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 256, gamma = 0.99, lr = 1e-4, tau = 0.001):
 
         self.env = env
         print(self.env.action_space, 'action_space', self.env.observation_space, 'observation_space')
@@ -113,7 +111,7 @@ class PPO:
 
         return model
 
-    def build_critic(self):#inserire due output per il modello
+    def build_critic(self):
 
         state_input = Input(shape=(self.state_size,))
         x = Dense(64, activation='relu')(state_input)
@@ -164,11 +162,10 @@ class PPO:
         tmp_batch = [[], [], [], [], []]
         while len(batch[0]) < self.buffer_size:
             action1, action2, action_matrix1, action_matrix2, predicted_action_p, predicted_action_q = self.get_action()
-            #print(action1)
-            #print(action2)
+
             observation, reward, done, _ = self.env.step([action1, action2])
             self.reward.append(reward)
-            #print(reward)
+
 
             tmp_batch[0].append(self.observation)
             tmp_batch[1].append(action_matrix1)
@@ -186,12 +183,10 @@ class PPO:
                 self.reward_list.append(reward)
 
                 if self.episode % 500:
-                    # print("> Saving...")
                     np.savetxt("results/reward_list.txt" , self.reward_list, fmt='%3i')
                     np.savetxt("results/success_list.txt", self.success_list, fmt='%3i')
                     self.model.save("models/trainedPPO.h5")
 
-                # print("Episode: {:7.0f}, Success: {:3.0f}".format(self.episode, self.success))
 
                 self.transform_reward()
                 for i in range(len(tmp_batch[0])):
@@ -207,7 +202,7 @@ class PPO:
                 self.reset_env()
         obs, action1, action2, pred_p,pred_q, reward = np.array(batch[0]), np.array(batch[1]), np.array(batch[2]), np.array(batch[3]), np.array(batch[4]), np.reshape(np.array(batch[5]), (len(batch[5]), 1))
         pred_p = np.reshape(pred_p, (pred_p.shape[0], pred_p.shape[2]))
-        pred_q = np.reshape(pred_q, (pred_q.shape[0], pred_q.shape[2]))#controllare
+        pred_q = np.reshape(pred_q, (pred_q.shape[0], pred_q.shape[2]))
         return obs, action1, action2, pred_p, pred_q, reward
 
     def run(self):
@@ -251,7 +246,7 @@ class PPO:
         #plt.plot(x1, y1, 'o-')
         plt.plot(ma_list)
         plt.grid(True)
-        plt.title("Reward and Success")
+        plt.title("PPO - Linear and Angular Velocity")
         plt.ylabel("reward")
 
         plt.subplot(2, 1, 2)
