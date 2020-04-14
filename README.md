@@ -61,7 +61,7 @@ For run the code just run the main.c file into anaconda environment:
 activate tensorflow
 python main.c
 ```
-(If you change environment you should change the imported environment into main.c)
+(If you want to change environment you should edit main.c)
 
 End with an example of getting some data out of the system or using it for a little demo
 
