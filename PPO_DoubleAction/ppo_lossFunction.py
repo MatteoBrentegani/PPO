@@ -20,7 +20,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 EPISODES = 5000
 
-# LOSS_CLIPPING = 0.2 # Only implemented clipping for the surrogate loss, paper said it was best
+
 EPOCHS = 10
 NOISE = 1.0 # Exploration noise
 ENTROPY_LOSS = 1e-3
