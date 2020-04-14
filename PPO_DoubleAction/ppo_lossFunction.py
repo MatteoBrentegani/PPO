@@ -24,6 +24,7 @@ EPISODES = 5000
 EPOCHS = 10
 NOISE = 1.0 # Exploration noise
 ENTROPY_LOSS = 1e-3
+EPSILON = 0.2
 
 
 @nb.jit
@@ -36,7 +37,7 @@ def proximal_policy_optimization_loss(advantage, old_prediction):
         prob = y_true * y_pred
         old_prob = y_true * old_prediction
         r = prob/(old_prob + 1e-10)
-        return -K.mean(K.minimum(r * advantage, K.clip(r, min_value=0.8, max_value=1.2) * advantage) + ENTROPY_LOSS * -(prob * K.log(prob + 1e-10)))
+        return -K.mean(K.minimum(r * advantage, K.clip(r, min_value=1-EPSILON, max_value=1+EPSILON) * advantage) + ENTROPY_LOSS * -(prob * K.log(prob + 1e-10)))
     return loss
 
 # losses ={
