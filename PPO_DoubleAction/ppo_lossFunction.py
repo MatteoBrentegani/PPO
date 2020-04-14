@@ -49,8 +49,8 @@ lossWeights={
     "output2":0.375
 }
 
-target1 =  tf.placeholder(tf.float32, shape=(64,5)) # shapes of output1 your target has
-target2 = tf.placeholder(tf.float32, shape=(64,3)) # shapes of output2 your target has
+target1 =  tf.placeholder(tf.float32, shape=(64,5)) 
+target2 = tf.placeholder(tf.float32, shape=(64,3))
 
 
 class PPO:
@@ -84,7 +84,7 @@ class PPO:
         self.run()
 
 
-    def build_model(self): #try relu activation here and into build_critic
+    def build_model(self): 
         state_input = Input(shape=(self.state_size,))
         advantage1 = Input(shape=(1,))
         advantage2 = Input(shape=(1,))
@@ -152,7 +152,6 @@ class PPO:
         return action, action2, action_matrix1, action_matrix2, p, q
 
     def transform_reward(self):
-        #print('Episode reward', np.array(self.reward).sum(), self.episode)
         self.reward_over_time.append(np.array(self.reward).sum())
         for j in range(len(self.reward) - 2, -1, -1):
             self.reward[j] += self.reward[j + 1] * self.gamma
@@ -176,7 +175,6 @@ class PPO:
             self.observation = observation
 
             if done:
-                #print("done")
                 self.success_queue.append(reward)
                 self.success = int(self.success_queue.count(1)/(len(self.success_queue)+0.0)*100)
 
@@ -244,14 +242,12 @@ class PPO:
         y2=np.linspace(0.0, 100)
 
         plt.subplot(2, 1, 1)
-        #plt.plot(x1, y1, 'o-')
         plt.plot(ma_list)
         plt.grid(True)
         plt.title("PPO - Linear and Angular Velocity")
         plt.ylabel("reward")
 
         plt.subplot(2, 1, 2)
-        #plt.plot(x2, y2, '.-')
         plt.plot(ma_success, 'r')
         plt.grid(True)
         plt.xlabel('episodes')
