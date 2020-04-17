@@ -5,6 +5,20 @@ but the neural network will be trained with only one agent experience.
 This is an agent that reached a final state (collision/goal). The goal is only achieved if an agent reaches his cube.
 
 
+# Code
+* ``run_exp.py`main.py
+
+Create environmentt and run the ppo algorithm.
+
+* ``run_exp.py`config.yaml
+
+Configuration about agent and environment
+
+* ``run_exp.py`ppo_lossFuncition.py
+
+Implementation of PPO algorithm.
+
+
 # Training
 
 For the training were used two environment. The first one without obstacle and the second with 4 walls.
