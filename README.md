@@ -10,7 +10,7 @@ This is an implementation of PPO with:
 
 The project implement the clipped version of Proximal Policy Optimization Algorithms described here https://arxiv.org/pdf/1707.06347.pdf
 
-Into the config.txt file are defined some of the hyper parameter used into the various implementation. Those parameters are initilized with the values proposed in the article.
+Into the config.yaml file are defined some of the hyper parameter used into the various implementation. Those parameters are initilized with the values proposed in the article.
 
 
 Here the key point:
