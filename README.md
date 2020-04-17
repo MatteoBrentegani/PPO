@@ -1,16 +1,14 @@
 # Proximal Policy Optimization - with Keras
 
-This is an implementation of PPO with:
-  * double action stream (Linear and Angular Velocity) [PPO_DoubleAction](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_DoubleAction)
-  * multiple agent [PPO-MultipleAgent](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_MultiAgent)
-
+This is an implementation of the [PPO algorithm](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_DoubleAction). The agent to move in the environment uses both angular and linear speed.
+This feature is also used in the [Multi-agent version](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_MultiAgent).
 
 
 ## Summary
 
 The project implement the clipped version of Proximal Policy Optimization Algorithms described here https://arxiv.org/pdf/1707.06347.pdf
 
-Into the config.txt file are defined some of the hyper parameter used into the various implementation. Those parameters are initilized with the values proposed into the article, linked above.
+Into the config.yaml file are defined some of the hyper parameter used into the various implementation. Those parameters are initilized with the values proposed in the article.
 
 
 Here the key point:
@@ -61,7 +59,5 @@ For start the training run the main.py file into anaconda environment:
 activate tensorflow
 python main.c
 ```
-
-
 
 
