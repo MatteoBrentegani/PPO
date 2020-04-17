@@ -6,15 +6,15 @@ This is an agent that reached a final state (collision/goal). The goal is only a
 
 
 # Code
-* ``run_exp.py`main.py``
+* ``main.py``
 
 Create environmentt and run the ppo algorithm.
 
-* ``run_exp.py`config.yaml``
+* ``config.yaml``
 
 Configuration about agent and environment
 
-* ``run_exp.py`ppo_lossFuncition.py``
+* ``ppo_lossFuncition.py``
 
 Implementation of PPO algorithm.
 
