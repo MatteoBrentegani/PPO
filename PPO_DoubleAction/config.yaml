@@ -10,5 +10,3 @@ network_size:
     action_size : 5
     action_size2 : 3
     batch_size : 64
-#Input layer: 27 nodes (25 laser scan + target heading + target distance)
-#Output layer: 8 nodes in 2 streams: 5 nodes for angular and 3 for linear
