@@ -60,8 +60,4 @@ activate tensorflow
 python main.c
 ```
 
-###Conclusion
-
-
-
 
