@@ -5,7 +5,7 @@ but the neural network will be trained with only one agent experience.
 This is an agent that reached a final state (collision/goal). The goal is only achieved if an agent reaches his cube.
 
 
-#Training
+# Training
 
 For the training were used two environment. The first one without obstacle and the second with 4 walls.
 
