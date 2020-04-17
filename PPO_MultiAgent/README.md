@@ -19,3 +19,5 @@ For the training were used two environment. The first one without obstacle and t
 ![image](https://github.com/MatteoBrentegani/PPO/blob/master/PPO_MultiAgent/results/ppo_MultiAgentObstacle.png)
 
 It easy to notice that obstacles decreased the success rate. In any case, the behavior of the algorithm applied to a [single agent](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_DoubleAction) does not differ much from that obtained here.
+
+
