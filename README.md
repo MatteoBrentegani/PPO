@@ -60,4 +60,13 @@ activate tensorflow
 python main.c
 ```
 
+### Future work
 
+The project currently under development involves the use of a neural network shared between the various agents. In addition, each agent has a critical neural network, similar to that used in previous implementations. 
+
+The results found with the various tests were not positive. The agents after several episodes assumed wrong behavior. 
+With the [proposed solution](https://github.com/MatteoBrentegani/PPO/tree/master/PPO_CentralizedNN) it was possible to achieve a good level of success, but not consistently.
+
+Arriving at a certain number of episodes, the agents begin to adopt repetitive behaviors. This leads to two possible results:
+ * one of the agents manages to constantly reach the goal while the others do not move;
+ * agents remain stationary on the spot
