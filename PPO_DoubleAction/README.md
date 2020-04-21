@@ -1,4 +1,4 @@
-#PPO with double action
+# PPO with double action
 
 # Summary
 This code implement a single agent version of PPO.
