@@ -1,0 +1,11 @@
+training:
+    episodes : 30000
+    target_update : 800
+
+hyperparameters:
+    discount_factor : 0.99
+network_size:
+    state_size : 27
+    action_size : 5
+    action_size2 : 3
+    batch_size : 64
