@@ -1,4 +1,4 @@
-#PPO with centralized neural network
+# PPO with centralized neural network
 
 # Summary
 This code implement a version of PPO with multiple agent and a shared neural network.
