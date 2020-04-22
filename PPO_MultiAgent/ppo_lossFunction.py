@@ -21,7 +21,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 EPISODES = 5000
 
-# LOSS_CLIPPING = 0.2 # Only implemented clipping for the surrogate loss, paper said it was best
 EPOCHS = 10
 NOISE = 1.0 # Exploration noise
 ENTROPY_LOSS = 1e-3
@@ -41,10 +40,7 @@ def proximal_policy_optimization_loss(advantage, old_prediction):
         return -K.mean(K.minimum(r * advantage, K.clip(r, min_value=0.8, max_value=1.2) * advantage) + ENTROPY_LOSS * -(prob * K.log(prob + 1e-10)))
     return loss
 
-# losses ={
-#     "output_layer1":proximal_policy_optimization_loss(advantage=advantage, old_prediction= old_prediction_p),
-#     "output_layer2":proximal_policy_optimization_loss(advantage=advantage, old_prediction= old_prediction_q)
-# }
+
 lossWeights={
     "output1":0.625,
     "output2":0.375
@@ -55,7 +51,6 @@ target2 = tf.placeholder(tf.float32, shape=(64,3)) # shapes of output2 your targ
 
 
 
-# old buffer size 20000
 class PPO:
     def __init__(self, env, eps, eps_min, eps_decay, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 256, gamma = 0.99, lr = 1e-4, tau = 0.001):
 
@@ -94,7 +89,7 @@ class PPO:
         self.run()
 
 
-    def build_model(self): #try relu activation here and into build_critic
+    def build_model(self):
         state_input = Input(shape=(self.state_size,))
         advantage1 = Input(shape=(1,))
         advantage2 = Input(shape=(1,))
@@ -122,7 +117,7 @@ class PPO:
 
         return model
 
-    def build_critic(self):#inserire due output per il modello
+    def build_critic(self):
 
         state_input = Input(shape=(self.state_size,))
         x = Dense(64, activation='relu')(state_input)
@@ -164,7 +159,6 @@ class PPO:
 
         obs = np.array(tmp1[:])
 
-        #print(self.observation)
         p, q = self.model.predict([obs.reshape(1, self.state_size), self.dummy_value1, self.dummy_value2, self.dummy_action1, self.dummy_action2])
 
         action = np.random.choice(self.action_size , p=np.nan_to_num(p[0]))
@@ -179,7 +173,6 @@ class PPO:
         return [action, action2, action_matrix1, action_matrix2, p, q]
 
     def transform_reward(self, index):
-        #print('Episode reward', np.array(self.reward).sum(), self.episode)
         if index == 1:
             self.reward_over_time.append(np.array(self.reward).sum())
         if index == 2:
@@ -215,9 +208,6 @@ class PPO:
 
         for j in range(len(self.reward7) - 2, -1, -1):
             self.reward7[j] += self.reward7[j + 1] * self.gamma
-        # self.reward_over_time2.append(np.array(self.reward2).sum())
-        # for j in range(len(self.reward2) - 2, -1, -1):
-        #     self.reward2[j] += self.reward2[j + 1] * self.gamma
 
     def return_reward(self, i):
         if i == 1:
@@ -248,7 +238,7 @@ class PPO:
             agent5 = self.get_action(4)
             agent6 = self.get_action(5)
             agent7 = self.get_action(6)
-            #print(action2)
+            
 
             observation, reward, done, _ = self.env.step([[agent1[0],agent1[1]],[agent2[0],agent2[1]],[agent3[0],agent3[1]],[agent4[0],agent4[1]],[agent5[0],agent5[1]],[agent6[0],agent6[1]],[agent7[0],agent7[1]]])
 
@@ -259,11 +249,11 @@ class PPO:
             self.reward5.append(reward[4])
             self.reward6.append(reward[5])
             self.reward7.append(reward[6])
-            #print(reward)
+            
             #[action, action2, action_matrix1, action_matrix2, p, q]
             # 0         1       2               3              4  5
 
-            #print(np.shape(self.observation)) #(7 ,27)
+            
             tmp_batch[0].append(self.observation)
             tmp_batch[1].append(agent1)
             tmp_batch[2].append(agent2)
@@ -272,9 +262,7 @@ class PPO:
             tmp_batch[5].append(agent5)
             tmp_batch[6].append(agent6)
             tmp_batch[7].append(agent7)
-            # print(np.shape(tmp_batch[0]))
-
-            #devo separare tuti gli obs degli agenti
+           
 
             self.observation = observation
 
@@ -284,16 +272,10 @@ class PPO:
                 index = index +1
             except:
                 index = -1
-                # self.reward.append(np.amax(reward))
+                
 
-                #dobbiamo trovare il valore miglopre da dare alla reward quando non va in done
-                #proviamo a tenere un agente come master agent[:][0] e vediamo che succede
-                #self.reward.append(reward[:][0])
-                #print(reward[:]) cosa contiene reward ? è un array perrche facevo sopra reward[:][0]? se era un array
-
-            #nel batch devo inserire l'observation corretta, dovro dividere tra i due agenti
-
-            if index >= 0: #ne basta una ad done e resettiamo tutto
+           
+            if index >= 0:
 
                 self.success_queue.append(reward[:][index-1])
                 self.success = int(self.success_queue.count(1)/(len(self.success_queue)+0.0)*100)
@@ -307,13 +289,8 @@ class PPO:
                     np.savetxt("results/success_list.txt", self.success_list, fmt='%3i')
                     self.model.save("models/trainedPPO.h5")
 
-                # print("Episode: {:7.0f}, Success: {:3.0f}".format(self.episode, self.success))
-
-                #print(index)
-                #print(tmp_batch[index][0][0])
-                #print(len(tmp_batch[index][0] - 2))
+               
                 self.transform_reward(index)
-                # r = self.return_reward(index)
 
                 for i in range(len(tmp_batch[index])): #j == index into the normal execution
                     obs, action1, action2, pred_p, pred_q = tmp_batch[0], tmp_batch[index][i][2], tmp_batch[index][i][3], tmp_batch[index][i][4], tmp_batch[index][i][5]
@@ -359,14 +336,10 @@ class PPO:
         while self.episode < EPISODES:
             obs, action1, action2, pred_p, pred_q, reward = self.get_batch()
 
-            #controlalre di aver fatto le cose bene e che non vengano cancellati alcunia centif acendo buffer size
+           
 
             obs, action1, action2, pred_p, pred_q, reward= obs[:self.buffer_size], action1[:self.buffer_size], action2[:self.buffer_size], pred_p[:self.buffer_size], pred_q[:self.buffer_size], reward[:self.buffer_size]
-            # old_prediction_p = pred_p
-            # old_prediction_q = pred_q
-
-
-            # print(obs.shape)
+           
             pred_values1, pred_values2= self.critic1.predict(obs)
 
             advantage1 = reward - pred_values1
@@ -379,7 +352,7 @@ class PPO:
 
             critic_loss = self.critic1.fit([obs], [reward, reward], batch_size=self.batch_size, shuffle=True, epochs=EPOCHS, verbose=False)
 
-            #CONTROLALRE IL REWARD DEL CRITI NON CORRETTO SECONDO ME, PERCHE ANCHE AL'AGENTE 2 DO REWARD DELL'AGENTE 1
+         
             self.gradient_steps += 1
 
         self.model.save("models/trainedPPO.h5")
