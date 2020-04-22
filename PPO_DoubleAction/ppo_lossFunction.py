@@ -40,10 +40,7 @@ def proximal_policy_optimization_loss(advantage, old_prediction):
         return -K.mean(K.minimum(r * advantage, K.clip(r, min_value=1-EPSILON, max_value=1+EPSILON) * advantage) + ENTROPY_LOSS * -(prob * K.log(prob + 1e-10)))
     return loss
 
-# losses ={
-#     "output_layer1":proximal_policy_optimization_loss(advantage=advantage, old_prediction= old_prediction_p),
-#     "output_layer2":proximal_policy_optimization_loss(advantage=advantage, old_prediction= old_prediction_q)
-# }
+
 lossWeights={
     "output1":0.625,
     "output2":0.375
