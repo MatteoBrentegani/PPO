@@ -42,8 +42,8 @@ def proximal_policy_optimization_loss(advantage, old_prediction):
 
 
 lossWeights={
-    "output1":0.625,
-    "output2":0.375
+    "output1":0.5,
+    "output2":0.5
 }
 
 target1 =  tf.placeholder(tf.float32, shape=(64,5)) 
