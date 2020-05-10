@@ -24,8 +24,8 @@ Here the key point:
   * batch_size = 64
   * output layer = 8 into 2 streams (5 nodes for angular and 3 for linear velocity)
   * lossWeights for the output layer: 
-    * 0,625
-    * 0.375
+    * 0,5
+    * 0.5
     
 The values for the loss weights are the result of some test. With an equal weight the success rate is lower. 
 
