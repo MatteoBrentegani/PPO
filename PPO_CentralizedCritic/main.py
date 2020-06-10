@@ -2,7 +2,7 @@
 import sys
 import yaml
 
-from bestppoC import PPO
+from ppoC import PPO
 #from ppo_V2 import PPO
 from gym_unity.envs import UnityEnv
 
