@@ -21,7 +21,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 EPISODES = 5000
 
-# LOSS_CLIPPING = 0.2 # Only implemented clipping for the surrogate loss, paper said it was best
 EPOCHS = 10
 NOISE = 1.0 # Exploration noise
 ENTROPY_LOSS = 1e-3
@@ -51,7 +50,6 @@ target1 =  tf.placeholder(tf.float32, shape=(64,5))
 target2 = tf.placeholder(tf.float32, shape=(64,3))
 
 
-# old buffer size 20000
 class PPO:
     #256 buffer_size
     def __init__(self, env, eps, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 512, gamma = 0.99, lr = 1e-4, tau = 0.001):
@@ -127,18 +125,8 @@ class PPO:
         x = Dense(64, activation='relu')(x)
         x = Dense(64, activation='relu')(x)
 
-        #agent1
         out_value11 = Dense(1)(x)
         out_value12 = Dense(1)(x)
-        # #agent2
-        # out_value21 = Dense(1)(x)
-        # out_value22 = Dense(1)(x)
-        # #agent3
-        # out_value31 = Dense(1)(x)
-        # out_value32 = Dense(1)(x)
-        # #agent4
-        # out_value41 = Dense(1)(x)
-        # out_value42 = Dense(1)(x)
 
         model = Model(inputs=[state_input1, state_input2, state_input3, state_input4], outputs=[out_value11, out_value12])#, out_value21, out_value22, out_value31, out_value32, out_value41, out_value42])
         model.compile(optimizer=Adam(lr=self.lr), loss='mse')
@@ -297,9 +285,7 @@ class PPO:
                     self.batchElaboration(tmp_batch, reward, index, batch, obs_batch)
                     ack = True;
 
-            # if (sum(done) >=1 and sum(done) < 4):
-            #     ack = True
-            #     print("EXCEPTION")
+         
 
             if (ack == True):
                 tmp_batch = [[], [], [], [], [], [], [], []]
@@ -328,11 +314,6 @@ class PPO:
             print("> EPISODE:", self.episode )
 
         self.transform_reward(index)
-        # print("INDICE >>>>>>>>>>> ", len(tmp_batch[index]))
-        # print("REWARD1 >>>>>>>>>>> ", len(self.reward))
-        # print("REWARD2 >>>>>>>>>>> ", len(self.reward2))
-        # print("REWARD3 >>>>>>>>>>> ", len(self.reward3))
-        # print("REWARD4 >>>>>>>>>>> ", len(self.reward4))
         for i in range(len(tmp_batch[index])):
             obs, action1, action2, pred_p, pred_q = tmp_batch[0], tmp_batch[index][i][2], tmp_batch[index][i][3], tmp_batch[index][i][4], tmp_batch[index][i][5]
             #print(pred_p)
@@ -381,7 +362,6 @@ class PPO:
 
             critic_loss = self.critic1.fit([obs_batch1, obs_batch2, obs_batch3, obs_batch4], [reward, reward], batch_size=self.batch_size, shuffle=True, epochs=EPOCHS, verbose=False)
 
-            #CONTROLALRE IL REWARD DEL CRITI NON CORRETTO SECONDO ME, PERCHE ANCHE AL'AGENTE 2 DO REWARD DELL'AGENTE 1
             self.gradient_steps += 1
 
         self.model.save("models/trainedPPO.h5")
