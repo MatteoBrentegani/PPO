@@ -13,6 +13,7 @@ from keras.optimizers import Adam
 # from tensorboardX import SummaryWriter
 
 import matplotlib.pyplot as plt
+import pandas as pd
 import numba as nb
 
 import tensorflow as tf
@@ -54,7 +55,7 @@ target2 = tf.placeholder(tf.float32, shape=(64,3))
 # old buffer size 20000
 class PPO:
     #256 buffer_size
-    def __init__(self, env, eps, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 512, gamma = 0.99, lr = 1e-4, tau = 0.001):
+    def __init__(self, env, eps, batch_size, target_update, episodes, state_size, action_size, action_size2, buffer_size = 256, gamma = 0.99, lr = 1e-4, tau = 0.001):
 
         self.env = env
         print(self.env.action_space, 'action_space', self.env.observation_space, 'observation_space')
@@ -64,8 +65,10 @@ class PPO:
         self.reward2 = []
         self.reward3 = []
         self.reward4 = []
-        self.reward_over_time = []
+        self.reward_over_time1 = []
         self.reward_over_time2 = []
+        self.reward_over_time3 = []
+        self.reward_over_time4 = []
         self.gradient_steps = 0
         self.action_size = action_size
         self.action_size2 = action_size2
@@ -77,9 +80,18 @@ class PPO:
 
 
         self.reward_list = []
-        self.success_list = []
-        self.success = 0
-        self.success_queue = deque(maxlen = 100)
+        self.success_list1 = []
+        self.success_list2 = []
+        self.success_list3 = []
+        self.success_list4 = []
+        self.success1 = 0
+        self.success_queue1 = deque(maxlen = 100)
+        self.success2 = 0
+        self.success_queue2 = deque(maxlen = 100)
+        self.success3 = 0
+        self.success_queue3 = deque(maxlen = 100)
+        self.success4 = 0
+        self.success_queue4 = deque(maxlen = 100)
 
         self.dummy_action1, self.dummy_action2, self.dummy_value1, self.dummy_value2 = np.zeros((1, self.action_size )), np.zeros((1, self.action_size2 )), np.zeros((1, 1)), np.zeros((1, 1))
         self.critic1 = self.build_critic()
@@ -185,19 +197,19 @@ class PPO:
     def transform_reward(self, index):
         #print('Episode reward', np.array(self.reward).sum(), self.episode)
         if index == 1:
-            self.reward_over_time.append(np.array(self.reward).sum())
+            self.reward_over_time1.append(np.array(self.reward).sum())
             for j in range(len(self.reward) - 2, -1, -1):
                 self.reward[j] += self.reward[j + 1] * self.gamma
         if index == 2:
-            self.reward_over_time.append(np.array(self.reward2).sum())
+            self.reward_over_time2.append(np.array(self.reward2).sum())
             for j in range(len(self.reward2) - 2, -1, -1):
                 self.reward2[j] += self.reward2[j + 1] * self.gamma
         if index == 3:
-            self.reward_over_time.append(np.array(self.reward3).sum())
+            self.reward_over_time3.append(np.array(self.reward3).sum())
             for j in range(len(self.reward3) - 2, -1, -1):
                 self.reward3[j] += self.reward3[j + 1] * self.gamma
         if index == 4:
-            self.reward_over_time.append(np.array(self.reward4).sum())
+            self.reward_over_time4.append(np.array(self.reward4).sum())
             for j in range(len(self.reward4) - 2, -1, -1):
                 self.reward4[j] += self.reward4[j + 1] * self.gamma
 
@@ -274,34 +286,27 @@ class PPO:
 
             self.observation = observation
 
-            ack = False;
             if (done[0] == True and done[1] == True and done[2] == True and done[3] == True):
                 # if done[0] == True and (reward[0] == 1 or reward[0] == -1):
                     #print("done 1", reward[0])
                 index = 1;
-                self.batchElaboration(tmp_batch, reward, index, batch, obs_batch)
+                self.batchElaboration(tmp_batch, reward[0], index, batch, obs_batch)
                 # ack = True;
                 # if done[1] == True and (reward[1] == 1 or reward[1] == -1):
                     #print("done 2", reward[1])
                 index = 2;
-                self.batchElaboration(tmp_batch, reward, index, batch, obs_batch)
+                self.batchElaboration(tmp_batch, reward[1], index, batch, obs_batch)
                 # ack = True;
                 # if done[2] == True and (reward[2] == 1 or reward[2] == -1):
                     #print("done 3", reward[2])
                 index = 3;
-                self.batchElaboration(tmp_batch, reward, index, batch, obs_batch)
+                self.batchElaboration(tmp_batch, reward[2], index, batch, obs_batch)
                 # ack = True;
                 # if done[3] == True and (reward[3] == 1 or reward[3] == -1):
                     #print("done 4", reward[3])
                 index = 4;
-                self.batchElaboration(tmp_batch, reward, index, batch, obs_batch)
-                ack = True;
+                self.batchElaboration(tmp_batch, reward[3], index, batch, obs_batch)
 
-            # if (sum(done) >=1 and sum(done) < 4):
-            #     ack = True
-            #     print("EXCEPTION")
-
-            if (ack == True):
                 tmp_batch = [[], [], [], [], [], [], [], []]
                 self.reset_env()
 
@@ -314,16 +319,33 @@ class PPO:
 
     def batchElaboration(self, tmp_batch, reward, index, batch, obs_batch):
 
-        self.success_queue.append(reward[:][index-1])
-        self.success = int(self.success_queue.count(1)/(len(self.success_queue)+0.0)*100)
 
-        self.success_list.append(self.success)
-        self.reward_list.append(reward[:][index-1])
+        if index == 1:
+            self.success_queue1.append(reward)
+            self.success1 = int(self.success_queue1.count(1)/(len(self.success_queue1)+0.0)*100)
+            self.success_list1.append(self.success1)
+        if index == 2:
+            self.success_queue2.append(reward)
+            self.success2 = int(self.success_queue2.count(1)/(len(self.success_queue2)+0.0)*100)
+            self.success_list2.append(self.success2)
+        if index == 3:
+            self.success_queue3.append(reward)
+            self.success3 = int(self.success_queue3.count(1)/(len(self.success_queue3)+0.0)*100)
+            self.success_list3.append(self.success3)
+        if index == 4:
+            self.success_queue4.append(reward)
+            self.success4 = int(self.success_queue4.count(1)/(len(self.success_queue4)+0.0)*100)
+            self.success_list4.append(self.success4)
+
+        self.reward_list.append(reward)
 
         if self.episode % 500 == 0:
             # print("> Saving...")
             np.savetxt("results/reward_list.txt" , self.reward_list, fmt='%3i')
-            np.savetxt("results/success_list.txt", self.success_list, fmt='%3i')
+            np.savetxt("results/success_list1.txt", self.success_list1, fmt='%3i')
+            np.savetxt("results/success_list2.txt", self.success_list2, fmt='%3i')
+            np.savetxt("results/success_list3.txt", self.success_list3, fmt='%3i')
+            np.savetxt("results/success_list4.txt", self.success_list4, fmt='%3i')
             self.model.save("models/trainedPPO.h5")
             print("> EPISODE:", self.episode )
 
@@ -387,31 +409,173 @@ class PPO:
         self.model.save("models/trainedPPO.h5")
         print("> Stop")
 
-        old, ma_list, ma_success = 0, [], []
-        for value in self.reward_over_time:
-            old = exponential_average(old, value, .99)
-            ma_list.append(old)
-        for value in self.success_list:
-            ma_success.append(value)
 
-        x1=np.linspace(0.0, EPISODES)
-        x2=np.linspace(0.0, EPISODES)
+        old1, ma_list1, ma_success1 = 0, [], []
+        old2, ma_list2, ma_success2 = 0, [], []
+        old3, ma_list3, ma_success3 = 0, [], []
+        old4, ma_list4, ma_success4 = 0, [], []
 
-        y1=np.linspace(0.0, 100)
-        y2=np.linspace(0.0, 100)
+        for value in self.reward_over_time1:
+            old1 = exponential_average(old1, value, .99)
+            ma_list1.append(old1)
+        for value in self.success_list1:
+            ma_success1.append(value)
 
-        plt.subplot(2, 1, 1)
-        #plt.plot(x1, y1, 'o-')
-        plt.plot(ma_list)
-        plt.grid(True)
-        plt.title("PPO MultiAgent")
-        plt.ylabel("reward")
+        for value in self.reward_over_time2:
+            old2 = exponential_average(old2, value, .99)
+            ma_list2.append(old2)
+        for value in self.success_list2:
+            ma_success2.append(value)
 
-        plt.subplot(2, 1, 2)
-        #plt.plot(x2, y2, '.-')
-        plt.plot(ma_success, 'r')
-        plt.grid(True)
-        plt.xlabel('episodes')
-        plt.ylabel('success')
+        for value in self.reward_over_time3:
+            old3 = exponential_average(old3, value, .99)
+            ma_list3.append(old3)
+        for value in self.success_list3:
+            ma_success3.append(value)
+
+        for value in self.reward_over_time4:
+            old4 = exponential_average(old4, value, .99)
+            ma_list4.append(old4)
+        for value in self.success_list4:
+            ma_success4.append(value)
+
+        df1 = pd.DataFrame({'x': range(EPISODES), 'a1_S': ma_success1, 'a1_R': ma_list1})
+        df2 = pd.DataFrame({'x': range(EPISODES), 'a2_S': ma_success2, 'a2_R': ma_list2})
+        df3 = pd.DataFrame({'x': range(EPISODES), 'a3_S': ma_success3, 'a3_R': ma_list3})
+        df4 = pd.DataFrame({'x': range(EPISODES), 'a4_S': ma_success4, 'a4_R': ma_list4})
+        plt.figure(100)
+        # Initialize the figure
+        plt.style.use('seaborn-darkgrid')
+        palette = plt.get_cmap('Set1')
+        num=0
+        for column in df1.drop('x', axis=1):
+            num+=1
+
+            # Find the right spot on the plot
+            plt.subplot(2,1, num)
+            # plot every groups, but discreet
+            plt.plot(df1['x'], df1[column], marker='', color=palette(num), linewidth=1.9, alpha=0.9, label=column)
+            plt.xlim(0,EPISODES)
+            plt.ylim(-100,100)
+            if (num -1) % 2 == 0:
+                plt.ylabel("Success")
+            else:
+                plt.ylabel("Reward")
+            plt.xlabel("Episodes")
+            # Not ticks everywhere
+            if num in range(7) :
+                plt.tick_params(labelbottom='off')
+            if num not in [1,4,7] :
+                plt.tick_params(labelleft='off')
+
+            # Add title
+            plt.title(column, loc='left', fontsize=12, fontweight=0, color=palette(num) )
+
+
+        plt.suptitle("Agent 1 SuccessRate & Reward", fontsize=11, fontweight=0, color='black', style='italic')
+
+        # # Axis title
+        # plt.text(0.5, 0.02, 'Eisodes', ha='center', va='center')
+        # plt.text(0.06, 0.5, 'Success & Reward', ha='center', va='center', rotation='vertical')
+
+
+        plt.figure(200)
+
+        num=0
+        for column in df2.drop('x', axis=1):
+            num+=1
+
+            # Find the right spot on the plot
+            plt.subplot(2,1, num)
+            # plot every groups, but discreet
+            plt.plot(df2['x'], df2[column], marker='', color=palette(num), linewidth=1.9, alpha=0.9, label=column)
+            plt.xlim(0,EPISODES)
+            plt.ylim(-100,100)
+            if (num -1) % 2 == 0:
+                plt.ylabel("Success")
+            else:
+                plt.ylabel("Reward")
+            plt.xlabel("Episodes")
+            # Not ticks everywhere
+            if num in range(7) :
+                plt.tick_params(labelbottom='off')
+            if num not in [1,4,7] :
+                plt.tick_params(labelleft='off')
+
+            # Add title
+            plt.title(column, loc='left', fontsize=12, fontweight=0, color=palette(num) )
+
+
+        plt.suptitle("Agent 2 SuccessRate & Reward", fontsize=11, fontweight=0, color='black', style='italic')
+
+        # Axis title
+        # plt.text(0.5, 0.02, 'Episodes', ha='center', va='center')
+        # plt.text(0.06, 0.5, 'Success & Reward', ha='center', va='center', rotation='vertical')
+
+        plt.figure(300)
+
+        num=0
+        for column in df3.drop('x', axis=1):
+            num+=1
+
+            # Find the right spot on the plot
+            plt.subplot(2,1, num)
+            # plot every groups, but discreet
+            plt.plot(df3['x'], df3[column], marker='', color=palette(num), linewidth=1.9, alpha=0.9, label=column)
+            plt.xlim(0,EPISODES)
+            plt.ylim(-100,100)
+            if (num -1) % 2 == 0:
+                plt.ylabel("Success")
+            else:
+                plt.ylabel("Reward")
+            plt.xlabel("Episodes")
+            # Not ticks everywhere
+            if num in range(7) :
+                plt.tick_params(labelbottom='off')
+            if num not in [1,4,7] :
+                plt.tick_params(labelleft='off')
+
+            # Add title
+            plt.title(column, loc='left', fontsize=12, fontweight=0, color=palette(num) )
+
+
+        plt.suptitle("Agent 3 SuccessRate & Reward", fontsize=11, fontweight=0, color='black', style='italic')
+
+        # Axis title
+        # plt.text(0.5, 0.02, 'Episodes', ha='center', va='center')
+        # plt.text(0.06, 0.5, 'Success & Reward', ha='center', va='center', rotation='vertical')
+
+        plt.figure(400)
+
+        num=0
+        for column in df4.drop('x', axis=1):
+            num+=1
+
+            # Find the right spot on the plot
+            plt.subplot(2,1, num)
+            # plot every groups, but discreet
+            plt.plot(df4['x'], df4[column], marker='', color=palette(num), linewidth=1.9, alpha=0.9, label=column)
+            plt.xlim(0,EPISODES)
+            plt.ylim(-100,100)
+            if (num -1) % 2 == 0:
+                plt.ylabel("Success")
+            else:
+                plt.ylabel("Reward")
+            plt.xlabel("Episodes")
+            # Not ticks everywhere
+            if num in range(7) :
+                plt.tick_params(labelbottom='off')
+            if num not in [1,4,7] :
+                plt.tick_params(labelleft='off')
+
+            # Add title
+            plt.title(column, loc='left', fontsize=12, fontweight=0, color=palette(num) )
+
+
+        plt.suptitle("Agent 4 SuccessRate & Reward", fontsize=11, fontweight=0, color='black', style='italic')
+
+        # Axis title
+        # plt.text(0.5, 0.02, 'Episodes', ha='center', va='center')
+        # plt.text(0.06, 0.5, 'Success & Reward', ha='center', va='center', rotation='vertical')
 
         plt.show()
