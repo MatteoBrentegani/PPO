@@ -3,9 +3,12 @@
 # Summary
 This code implement a multiple agent version of PPO with centralized critic. In this version there is a single goal for all the agents.
 
-For start the training with this environment just edit the main.py file
+For start the training with this environment just edit the main.py file as follow.
 
-# code
+# Code
+
+
+
 ```
 from env1Goal import PPO
 
