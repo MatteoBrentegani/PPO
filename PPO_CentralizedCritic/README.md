@@ -1,4 +1,4 @@
-# PPO with Centralized Criticv
+# PPO with Centralized Critic
 
 # Summary
 This code implement a multiple agent version of PPO with centralized critic.
