@@ -254,35 +254,7 @@ class PPO:
             tmp_batch[3].append(agent3)
             tmp_batch[4].append(agent4)
 
-            # print("done 1 old", reward[0])
-            # print("done 2 old", reward[1])
-            # print("done 3 old", reward[2])
-            # print("done 4 old", reward[3])
-
-            # if (reward[0] >= oldReward1) and reward[0] != -1:
-            #     oldReward1 = reward[0]
-            #     reward[0] = 1
-            # else:
-            #     oldReward1 = reward[0]
-            #     reward[0] = -1
-            # if (reward[1] >= oldReward2) and reward[1] != -1:
-            #     oldReward2 = reward[1]
-            #     reward[1] = 1
-            # else:
-            #     oldReward2 = reward[1]
-            #     reward[1] = -1
-            # if (reward[2] >= oldReward3) and reward[2] != -1:
-            #     oldReward3 = reward[2]
-            #     reward[2] = 1
-            # else:
-            #     oldReward3 = reward[2]
-            #     reward[2] = -1
-            # if (reward[3] >= oldReward4) and reward[3] != -1:
-            #     oldReward4 = reward[3]
-            #     reward[3] = 1
-            # else:
-            #     oldReward4 = reward[3]
-            #     reward[3] = -1
+            
 
             self.observation = observation
 
@@ -350,11 +322,6 @@ class PPO:
             print("> EPISODE:", self.episode )
 
         self.transform_reward(index)
-        # print("INDICE >>>>>>>>>>> ", len(tmp_batch[index]))
-        # print("REWARD1 >>>>>>>>>>> ", len(self.reward))
-        # print("REWARD2 >>>>>>>>>>> ", len(self.reward2))
-        # print("REWARD3 >>>>>>>>>>> ", len(self.reward3))
-        # print("REWARD4 >>>>>>>>>>> ", len(self.reward4))
         for i in range(len(tmp_batch[index])):
             obs, action1, action2, pred_p, pred_q = tmp_batch[0], tmp_batch[index][i][2], tmp_batch[index][i][3], tmp_batch[index][i][4], tmp_batch[index][i][5]
             #print(pred_p)
@@ -385,7 +352,6 @@ class PPO:
         while self.episode < EPISODES:
             obs, action1, action2, pred_p, pred_q, reward, obs_batch1, obs_batch2, obs_batch3, obs_batch4 = self.get_batch()
 
-            #controlalre di aver fatto le cose bene e che non vengano cancellati alcunia centif acendo buffer size
 
             obs, action1, action2, pred_p, pred_q, reward= obs[:self.buffer_size], action1[:self.buffer_size], action2[:self.buffer_size], pred_p[:self.buffer_size], pred_q[:self.buffer_size], reward[:self.buffer_size]
 
