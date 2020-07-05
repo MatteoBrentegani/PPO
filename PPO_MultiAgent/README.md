@@ -4,6 +4,7 @@ This project implement 7 agent and a single neural network. The algorithm work a
 but the neural network will be trained with only one agent experience. 
 This is an agent that reached a final state (collision/goal). The goal is only achieved if an agent reaches his cube.
 
+<img src="https://github.com/MatteoBrentegani/PPO/blob/master/PPO_MultiAgent/MA_base.gif" width="250" height="250"/>
 
 # Code
 * ``main.py``
