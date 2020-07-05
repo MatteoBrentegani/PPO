@@ -1,7 +1,10 @@
 # PPO with Centralized Critic
 
 # Summary
-This code implement a multiple agent version of PPO with centralized critic.
+This code implement a multiple agent version of PPO with centralized critic. 
+Below is an example of simulation on the environment with a single shared target.
+
+<img src="https://github.com/MatteoBrentegani/PPO/blob/master/PPO_CentralizedCritic/MA_1Goal001.gif" width="250" height="250"/>
 
 # Code
 * ``main.py``
